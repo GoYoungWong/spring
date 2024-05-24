@@ -22,7 +22,7 @@ public class UserInfoController {
 	// UserInfoService 인터페이스를 사용한 이유는 다형성목적
 	private final UserInfoService userInfoService; 
 	
-	// 회원가입폼
+	// 회원가입폼  /userinfo/join
 	@GetMapping("/join")
 	public void joinForm() {
 		log.info("called join...");
