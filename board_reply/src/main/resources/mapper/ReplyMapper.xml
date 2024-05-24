@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.docmall.demo.mapper.ReplyMapper">
+
+<select id="getListPaging" resultType="com.docmall.demo.domain.ReplyVO">
+
+<![CDATA[ 
+SELECT rno, bno, retext, replyer, replydate, updatedate
+FROM (
+    SELECT /*+ INDEX_DESC(reply PK_REPLY) */
+        ROWNUM AS RN, rno, bno, retext, replyer, replydate, updatedate
+    FROM
+        reply
+    WHERE bno = #{bno}    -- 몇번 게시물인지 확인
+	
+	AND
+		ROWNUM <= (#{cri.pageNum} * #{cri.amount})
+)
+WHERE
+	RN > (#{cri.pageNum} - 1) * #{cri.amount}   -- (페이지번호 - 1) * 페이지별 출력건수
+
+]]>
+</select>
+
+<select id="getCountByBno" resultType="int" parameterType="Long">
+	
+	SELECT
+		COUNT(*)
+	FROM
+		reply
+	WHERE
+		bno = ${bno}
+
+</select>
+
+
+</mapper>

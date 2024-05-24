@@ -1,0 +1,22 @@
+package com.docmall.demo.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.docmall.demo.domain.ReplyVO;
+import com.docmall.demo.dto.Criteria;
+
+public interface ReplyMapper {
+	
+	// mapper인터페이스를 구현한 프록시객체에서 주입을 해줌
+	// Mapper인터페이스 메서드 파라미터가 2개이상 일 경우에는 @Param("이름") 어노테이션 사용해야 한다.
+	// Criteria - pageNum, amount, (type,keyword 제외)
+	// bno - 게시물 번호 
+	
+	// 댓글목록
+	List<ReplyVO> getListPaging(@Param("cri") Criteria cri,@Param("bno") Long bno);
+	
+	// 페이징작업
+	int getCountByBno(Long bno);
+}

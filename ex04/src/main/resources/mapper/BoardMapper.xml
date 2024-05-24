@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.docmall.demo.mapper.BoardMapper">
+	
+	<insert id="write" parameterType="com.docmall.demo.domain.BoardVO">
+	
+		INSERT INTO 
+			BOARD(bno, title, content, writer)
+		VALUES
+			(SEQ_BOARD.NEXTVAL, #{title}, #{content}, #{writer})
+	</insert>
+
+								 <!-- BoardVO의 리턴타입을 넣음  -->
+	<select id="list" resultType="com.docmall.demo.domain.BoardVO">
+	SELECT 
+		bno, title, content, writer, regdate, updatedate, viewcount
+	FROM 
+		board 
+	ORDER BY 
+		bno DESC
+	</select>
+	
+	<!-- 검색조건이 1)목록 2)총데이터 개수 공통사항-->
+	<!-- 검색종류가 (제목또는 작성자 또는 내용) 선택. "T"  "W"	 "C" -->
+	<!-- 동적SQL : 여러군데 사용됨-->
+	<sql id="criteria">
+		<!-- 1) prefix 2) suffix 3) foreach-->
+		<!-- prefixOverrides="OR" : 작업이 끝나고 맨앞에 있는 것을 제거하는 명령어 -->
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+			<!-- 검색조건의 value 값에 두개 이상인 값이 있어서 foreach사용. 없으면 않씀 -->
+			<!-- foreach: (title like '%검색어%' or writer like '%검색어%') 이런거 반복시켜주는 역할 -->
+			<foreach collection="typeArr" item="type">
+				<!-- OR를 앞에 붙임 -->
+				<trim prefix="OR">
+					<choose>
+						<when test="type == 'T'.toString()">
+							title like '%' || #{keyword} || '%'  <!-- || : 연결문자 -->
+						</when>
+						<when test="type == 'W'.toString()">
+							writer like '%' || #{keyword} || '%'
+						</when>
+						<when test="type == 'C'.toString()">
+							content like '%' || #{keyword} || '%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>		
+		</trim>
+	</sql>
+	
+	
+	
+	<!-- 페이징 --><!-- 공통사랑 : 검색조건추가 -->
+	<select id="listwithPaging" resultType="com.docmall.demo.domain.BoardVO" parameterType="com.docmall.demo.dto.Criteria">
+	
+	SELECT 
+		bno, title, content, writer, regdate, updatedate, viewcount
+	FROM (
+    		SELECT /*+ INDEX_DESC(BOARD PK_BOAD_2) */
+   			    ROWNUM AS RN, bno, title, content, writer, regdate, updatedate, viewcount
+    		FROM
+        		board
+    		WHERE 
+			<!-- 사용하는 코드가 여러군데 사용될떄 공통사항으로 사용 -->
+			<include refid="criteria"></include>	
+			
+	<![CDATA[
+			ROWNUM <= (#{pageNum} * #{amount})    -- 페이지번호 * 페이지별 출력건수
+		]]>
+		)			
+		WHERE 
+			RN > (#{pageNum} - 1) * #{amount}     -- (페이지번호 - 1) * 페이지별 출력건수
+	
+	
+	</select>
+	
+	<!-- 페이징 --><!-- 공통사랑 : 검색조건추가 -->
+	<select id="getTotalCount" resultType="int">
+		
+		SELECT
+			COUNT(*)
+		FROM
+			board
+		WHERE
+			<!-- 검색을 사용하지 않으면 아무런 코드를 작성하지 않음 위에만 작동됨 
+			     그래서 둘다 작동되게 bno > 0 조건식을 넣어 오류가 나지 않게 함  -->
+			<include refid="criteria"></include>
+			bno > 0
+	
+	</select>
+	
+	<update id="readCount" parameterType="Long">
+	UPDATE
+		board
+	SET
+		viewcount = viewcount + 1
+	WHERE
+	 	bno = #{bno}
+	</update>
+	
+	
+	<select id="get" resultType="com.docmall.demo.domain.BoardVO" parameterType="Long">
+	SELECT 
+		bno, title, content, writer, regdate, updatedate, viewcount
+	FROM 
+		board 
+	where 
+		bno = #{bno}
+	
+	</select>
+	
+	<update id="modify" parameterType="com.docmall.demo.domain.BoardVO">
+	UPDATE 
+		board
+    SET
+    	title = #{title}, content = #{content}, updatedate = sysdate
+	WHERE 
+		bno = #{bno}
+	
+	</update>
+	
+	<delete id="delete" parameterType="Long">
+	DELETE FROM
+		board
+	WHERE
+		bno = #{bno}
+	
+	</delete>
+	
+</mapper>

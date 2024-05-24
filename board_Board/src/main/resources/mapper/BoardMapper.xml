@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.docmall.demo.mapper.BoardMapper">
+
+<!-- SQL 쿼리 매핑: parameterType은 SQL 쿼리에 전달될 매개변수의 Java 타입을 지정합니다.
+ 이 속성을 통해 MyBatis는 SQL 쿼리에 전달된 매개변수를 적절하게 처리하고 바인딩할 수 있습니다. -->
+<insert id="write" parameterType="com.docmall.demo.domain.BoardVO">
+	INSERT INTO
+		BOARD(bno, title, content, writer)
+	VALUES
+		(SEQ_BOARD.NEXTVAL, #{title}, #{content}, #{writer})
+</insert>
+
+<sql id="criteria">                  <!-- 작동이 끝나고 마지막에 앞에 OR을 지움 -->
+	<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+		<foreach collection="typeArr" item="type">
+			<!-- OR을 앞에 붙임 -->
+			<trim prefix="OR">
+				<choose>
+					<when test="type == 'T'.toString()">  <!-- || 연결식 -->
+						title like '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'W'.toString()">  <!-- || 연결식 -->
+						writer like '%' || #{keyword} || '%'
+					</when>
+					<when test="type == 'C'.toString()">  <!-- || 연결식 -->
+						content like '%' || #{keyword} || '%'
+					</when>
+				</choose>
+			</trim>
+		</foreach>
+	</trim>
+</sql>
+
+<!-- resultType은 MyBatis에서 쿼리 결과의 타입을 지정하는데 사용되는 속성입니다.
+ 이 속성을 사용하여 MyBatis가 쿼리 결과를 매핑할 Java 객체의 타입을 지정할 수 있습니다. -->
+<select id="listwithPaging" resultType="com.docmall.demo.domain.BoardVO" parameterType="com.docmall.demo.dto.Criteria">
+	
+	SELECT
+		bno, title, content, writer, regdate, updatedate, viewcount
+	FROM (
+			SELECT /*+ INDEX_DESC(BOARD PK_BOARD) */       -- 대용량데이터는 인덱스로 정렬
+				ROWNUM AS RN, bno, title, content, writer, regdate, updatedate, viewcount
+			FROM
+				board
+			WHERE
+				<!-- 사용하는 코드가 여러군데 사용될떄 공통사항으로 사용 -->
+			<include refid="criteria"></include>
+	<![CDATA[
+    ROWNUM <= (#{pageNum} * #{amount})  -- 페이지번호 * 페이지별 출력건수
+	]]>
+	)
+	WHERE
+		RN > (#{pageNum} - 1 * #{amount})    -- (페이지 번호 - 1) * 페이지별 출력건수
+</select>
+<!-- #{} 구문은 SQL 쿼리에 매개변수를 바인딩하는 데 사용됩니다. -->
+
+<!-- 검색조건이 추가된 총 데이터개수 -->
+<select id="getTotalCount" resultType="int">
+	SELECT
+		COUNT(*)
+	FROM
+		board
+	WHERE
+		<!-- 검색을 사용하지 않으면 아무런 코드를 작성하지 않음 위에만 작동됨 
+	     그래서 둘다 작동되게 bno > 0 조건식을 넣어 오류가 나지 않게 함  -->
+		<include refid="criteria"></include>
+	bno > 0	
+</select>
+
+<update id="readCount" parameterType="Long">
+	UPDATE
+		board
+	SET
+		viewcount = viewcount + 1
+	WHERE
+		bno = #{bno}
+
+</update>
+
+<select id="get" resultType="com.docmall.demo.domain.BoardVO" parameterType="Long">
+	SELECT
+		bno, title, content, writer, regdate, updatedate, viewcount
+	FROM
+		board
+	WHERE
+		bno = #{bno}
+</select>
+
+<update id="modify" parameterType="com.docmall.demo.domain.BoardVO">
+
+	UPDATE
+		board
+	SET
+		title = #{title}, content = #{content}, updatedate = sysdate
+	WHERE
+		bno = #{bno}
+
+</update>
+
+<delete id="delete" parameterType="Long">
+	DELETE FROM
+		board
+	WHERE
+		bno = #{bno}
+</delete>
+
+
+
+
+
+
+</mapper>
