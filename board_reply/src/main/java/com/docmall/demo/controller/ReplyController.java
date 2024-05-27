@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,9 +61,7 @@ public class ReplyController {
 		
 		// 1)댓글목록 작업
 		// 페이징 처리를 위한 Criteria 객체를 생성합니다.
-		// new Criteria(page, 5)를 통해
-		// page 번호와 한 페이지당 5개의 항목을 설정한 Criteria 객체가 생성됩니다.
-		Criteria cri = new Criteria(page,5);
+		Criteria cri = new Criteria(page,5); // 한 페이지당 5개씩 표현
 		
 		// 댓글 목록을 페이징 처리하여 조회합니다.
 		// 메서드를 호출하여 특정 게시물(bno)의 댓글 목록을 페이징 처리하여 가져옵니다.
@@ -98,10 +98,21 @@ public class ReplyController {
 		return entity;
 	}
 	
-	
-	
-	
-	
+	// 댓글저장
+	// consumes = "application/json" : 클라이언트에서 보내는 데이터는 json 이어야 한다. 라고 명시
+	// produces = {MediaType.TEXT_PLAIN_VALUE} : 서버에서 클라이언트로 보내는 응답데이터는 text 이다 라는 설정. ResponseEntity<String> 이게 String 이여서 text 인것이다.
+	// @RequestBody : JSON데이터를 ReplyVO vo로 변환해주는 기능. 더불어서 jackson-databind-2.15.4.jar 라이브러리도 실제 json관련 작업을 함.
+	@PostMapping(value = "/new", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
+	public ResponseEntity<String> create(@RequestBody ReplyVO vo) {
+		ResponseEntity<String> entity = null;
+		
+		log.info("댓글데이터: " + vo);
+		
+		replyService.insert(vo);
+		
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+		return entity;
+	}
 	
 	
 	

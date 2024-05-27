@@ -15,7 +15,25 @@
 
 </select>
 
+<insert id="join" parameterType="com.docmall.demo.domain.UserInfoVO">
 
+	INSERT INTO 
+		userinfo(u_id, u_pwd, u_name, u_email, u_zip_code, u_addr, u_addrdetail, u_phone) 
+	VALUES
+		(#{u_id}, #{u_pwd}, #{u_name}, #{u_email}, #{u_zip_code}, #{u_addr}, #{u_addrdetail}, #{u_phone}) <!-- getter 매서드가 작동됨 -->
+
+</insert>
+
+<select id="login" resultType="com.docmall.demo.domain.UserInfoVO" parameterType="String">
+
+	SELECT 
+		u_id, u_pwd, u_name, u_email, u_zip_code, u_addr, u_addrdetail, u_phone 
+	FROM 
+		userinfo 
+	WHERE 
+		u_id = #{u_id}
+
+</select>
 
 
 

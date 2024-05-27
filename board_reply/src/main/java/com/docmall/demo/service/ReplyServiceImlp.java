@@ -27,4 +27,10 @@ public class ReplyServiceImlp implements ReplyService {
 		// TODO Auto-generated method stub
 		return replyMapper.getCountByBno(bno);
 	}
+
+	@Override
+	public void insert(ReplyVO vo) {
+		// TODO Auto-generated method stub
+		replyMapper.insert(vo);
+	}
 }

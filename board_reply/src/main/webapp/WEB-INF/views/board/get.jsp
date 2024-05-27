@@ -198,7 +198,7 @@ let actionForm = document.getElementById("actionForm");  // 위에 form태그 �
 // 여기부터
     // JQuery 작업을 하기위한 기본.
     // ready()이벤트 메서드. 브라우저가 모든 웹페이지의 내용을 읽고 시작되는 이벤트
-    $(document).ready(function() {
+   $(document).ready(function() { 
 
         // 댓글페이지번호 클릭이벤트
         // 아래 선택자에 참조되는 태그가 동적으로 생성된 경우에는 이벤트 설정불가(엄청중요)
@@ -214,38 +214,84 @@ let actionForm = document.getElementById("actionForm");  // 위에 form태그 �
 
         });
         */
+       // 동적태그를 이벤트 설정을 하는 경우
         $("div#replypager").on("click", "li a", function(e) {
             e.preventDefault(); // a태그의 href속성의 링크기능 없애기.
-
             // 클릭한 a태그를 참조
             replyPage = $(this).attr("href");  // a태그를 클릭했을 때 href에 주소를 참조하여 replyPage에 집어넣음
 
-            // console.log("페이지: " ,replyPage);
+            // console.log("페이지: " , replyPage);
 
-            url = "/replies/pages" + bno + "/" + replyPage;
+            url = "/replies/pages/" + bno + "/" + replyPage;
             getPage(url);
         });
 
         // 댓글쓰기 대화상자 버튼클릭.   document.getElementById("btnReplyWrite") 이 기능과 유사
         // $("댓글쓰기 버튼태그 참조하는 선택자")
         // function() : 익명함수(이름이 없는 함수)
-        $("#btnReplyWrite").on("click" , function() {
-            // console.log("댓글버튼 클릭"); // 코드작업이 잘 동작하는지 확인용
+        $("#btnReplyWrite").on("click", function() {
+            // console.log("댓글버튼클릭"); // 코드작업이 잘 동작하는지 확인용
 
             // 댓글번호,댓글 작성자, 내용 초기화
-            // 댓글쓰기 버튼 클릭시 있던 내용 초기화
-            $("#reply_rno").html("");   // 일반 태그는 html로 사용
-            $("#replyer").val("");     // input 같은 태그에 id는 val로 사용
+            $("#reply_rno").html("");
+            $("#replyer").val("");
             $("#retext").val("");
 
             // 모달버튼 화면 보임/숨김 작업.  <button name="btnModalReply"></button>
             // [] : 속성
-            $("button[name='btnModalReply']").hide(); // 등록, 수정, 삭제 3개의 버튼 숨심
-            $("#btnModalReplySave").show();    // 다시 등록만 화면에 보이게함
+            $("button[name='btnModalReply']").hide();  // 등록,수정,삭제 3개버튼 화면에서 숨김
+            $("#btnModalReplySave").show();  // 다시 등록버튼만 화면에 보여짐.
 
-            $("replyDialog").modal('show'); // replyDialog(모달) 화면에 보이게함
 
+            $("#replyDialog").modal('show'); // replyDialog을 화면에 보이게 함
         });
+
+        // 1)모달(Modal)대화상자 댓글등록
+        $("#btnModalReplySave").on("click",function(){
+            // console.log("댓글등록버튼"); // 코드작업이 잘 동작하는지 확인용
+
+            // $("#replyer").val(); : <input type="text" id="replyer"> 태그의 value값
+            let replyer = $("#replyer").val();
+            let retext = $("#retext").val();
+
+            // 1)댓글등록데이터를 자바스크립트 Object문법으로 표현
+            // 자바스크립트 오브젝트 문법
+            let replyData = {bno: ${boardVO.bno }, replyer : replyer, retext : retext};
+
+            // 2)댓글데이터를 JSON변환하여 서버에 전송. 
+            // JSON변환: 서로다른 데이터포맷을 공통된 포맷으로 보낼떄 사용되는 표현법
+            // console.log(JSON.stringify(replyData));
+
+            // return;
+
+            // ajax문법 
+            // 이걸 만들기전에 스프링에서 먼저 이거 관련 코딩을 먼저 해야한다.
+            $.ajax({
+                type: 'post',  // post형식으로 보낸다는 뜻
+                url : '/replies/new',   // 댓글저장 메핑주소
+                // ajax문법을 사용할때 headers는 JSON이라는것을 명시해줘야 data: JSON.stringify(replyData)로 JSON으로 전송할수 있다.
+                headers : {
+                    "Content-type" : "application/json", "X-HTTP-Method-Override" : "POST" // 보낼때 JSON 방식으로 보내진다고 명시해 주는 것
+                },
+                dataType: "text",  // 스프링 주소의 메서드 리턴타입(리턴타입이 String이기 떄문에 text로 적은 것)
+                data: JSON.stringify(replyData), // 서버로 전송할 JSON 데이터
+                success: function(data) {   // ajax 통신이 성공했을 때 실행되는 콜백함수
+                    if(data == "success") {
+                        alert("댓글 등록됨");
+                        let url = "/replies/pages/" + bno + "/" + replyPage;
+                        getPage(url);
+
+                        // 댓글 작성자, 내용 초기화(괄호안에 매개변수가 있으면 그 값으로 채움 없으면 내용을 읽어옴)
+                        $("#replyer").val("");
+                        $("#retext").val("");
+
+                        // modal dialog 화면에서 사라짐
+                        $("#replyDialog").modal('hide');
+                    }
+                }
+            });
+        });
+
 
 
 

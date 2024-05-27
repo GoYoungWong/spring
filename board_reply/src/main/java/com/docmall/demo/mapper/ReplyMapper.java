@@ -19,4 +19,8 @@ public interface ReplyMapper {
 	
 	// 페이징작업
 	int getCountByBno(Long bno);
+	
+	// 댓글저장
+	//insert : insert이 실행이 되면 자동으로 mapper.xml에 insert에서 자동으로 1이라는 값이 생성되는데 그 값을 사용하고 싶으면 int를 사용
+	void insert(ReplyVO vo);
 }

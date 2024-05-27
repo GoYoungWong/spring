@@ -58,7 +58,7 @@
 <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">
 <div class="container">
-    <h1 class="mt-5">Register</h1>
+    <h1 class="mt-5" style="text-align: center">Register</h1>
     <div class="row">
         <div class="col">
             <div class="card card-info">
@@ -66,7 +66,7 @@
                 <h3 class="card-title">Join Form</h3>
                 </div>
                 
-                <form class="form-horizontal">
+                <form class="form-horizontal" id="joinForm" action="/userinfo/join" method="post">
                 <div class="card-body">
                         <div class="form-group row">     <!-- 아이디 중복체크 만들기 위해 반으로 나누기. col 2 + col 4 = 6 -->
                             <label for="u_id" class="col-sm-2 col-form-label">U_ID</label>
@@ -120,7 +120,7 @@
                     <div class="form-group row">           <!-- 우편번호 -->
                         <label for="u_zipcode" class="col-sm-2 col-form-label">U_ZIPCODE</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="u_zipcode" name="sample2_postcode" placeholder="U_ZIPCODE">
+                            <input type="text" class="form-control" id="sample2_postcode" name="u_zip_code" placeholder="U_ZIPCODE">
                         </div>
                         <div class="col-sm-4">
                             <button type="button" class="btn btn-outline-primary" onclick="sample2_execDaumPostcode()">우편번호</button>
@@ -154,8 +154,8 @@
                     </div>
                 </div>
                 
-                    <div class="card-footer">
-                    <button type="submit" class="btn btn-info">Sign up</button>
+                    <div class="card-footer"><!-- id="btnJoin"   -->
+                    <button type="button" class="btn btn-info" id="btnJoin">Sign up</button> <!--type에 submit(전송기능있음) 이거나 button(전송기능없음) 이거나 하면 코드가 달라짐-->
                     <button type="reset" class="btn btn-default float-right">Cancel</button>
                     </div>
                     
@@ -267,7 +267,7 @@
 
     <script>
         
-        $(document).ready(function() {
+        $(document).ready(function() {   // ready event start
 
             let useIDCheck = false; // 아이디 중복체크 기능을 사용했는 지 유무를 확인.
 
@@ -356,7 +356,29 @@
 
                 });
             });
-        });
+
+            // 회원가입 클릭
+            // 아래 코드는 양립할수가 없다.
+            // 1) <button type="submit" class="btn btn-info" id="btnJoin">Sign up</button> - 폼 submit이벤트 사용.
+            /*$("#joinForm").on("submit", function(e) {
+                e.preventDefault();
+                console.log("submit event");
+                return;
+            });
+            */
+
+
+            // 2) <button type="button" class="btn btn-info" id="btnJoin">Sign up</button> - click이벤트 사용.
+            $("#btnJoin").on("click", function() {
+                // console.log("click event");
+
+                // 회원가입 유효성검사. : 정규식활용.
+
+                $("#joinForm").submit();  // Form에 있던 정보를 전송
+            
+            });
+
+        }); // ready event end
 
 
 

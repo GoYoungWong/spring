@@ -12,4 +12,7 @@ public interface ReplyService {
 		
 		// 페이징작업
 		int getCountByBno(Long bno);
+		
+		// 댓글저장
+		void insert(ReplyVO vo);
 }
