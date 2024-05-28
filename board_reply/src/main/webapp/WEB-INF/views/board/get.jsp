@@ -232,6 +232,7 @@ let actionForm = document.getElementById("actionForm");  // 위에 form태그 �
         $("#btnReplyWrite").on("click", function() {
             // console.log("댓글버튼클릭"); // 코드작업이 잘 동작하는지 확인용
 
+            // return;
             // 댓글번호,댓글 작성자, 내용 초기화
             $("#reply_rno").html("");
             $("#replyer").val("");

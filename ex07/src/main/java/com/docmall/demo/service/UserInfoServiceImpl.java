@@ -51,6 +51,29 @@ public class UserInfoServiceImpl implements UserInfoService {
 		// TODO Auto-generated method stub
 		return userInfoMapper.login(u_id);
 	}
+
+	@Override
+	public void modify(UserInfoVO vo) {
+		// TODO Auto-generated method stub
+		userInfoMapper.modify(vo);
+	}
+
+	@Override
+	public void changePw(String u_id, String new_pwd) {
+		// TODO Auto-generated method stub
+		userInfoMapper.changePw(u_id, new_pwd);
+	}
+
+	@Override
+	public void delete(String u_id) {
+		// TODO Auto-generated method stub
+		userInfoMapper.delete(u_id);
+	}
+
+
+
+	
+	
 	
 	
 }

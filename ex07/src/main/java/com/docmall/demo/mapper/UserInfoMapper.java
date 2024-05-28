@@ -1,5 +1,7 @@
 package com.docmall.demo.mapper;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.docmall.demo.domain.UserInfoVO;
 
 // UserInfoMapper.xml mapper파일 구성 정상
@@ -15,5 +17,14 @@ public interface UserInfoMapper {
 	
 	// 로그인
 	UserInfoVO login(String u_id);
+	
+	// 마이페이지수정
+	void modify(UserInfoVO vo);
+	
+	// 신규비밀번호
+	void changePw(@Param("u_id") String u_id,@Param("new_pwd") String new_pwd); // 파라미터 두개있을떄 @Param
+		
+	// 회원탈퇴
+	void delete(String u_id);
 
 }

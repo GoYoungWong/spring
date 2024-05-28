@@ -27,13 +27,45 @@
 <select id="login" resultType="com.docmall.demo.domain.UserInfoVO" parameterType="String">
 
 	SELECT 
-		u_id, u_pwd, u_name, u_email, u_zip_code, u_addr, u_addrdetail, u_phone 
+		u_id, u_pwd, u_name, u_email, u_zip_code, u_addr, u_addrdetail, u_phone, u_regdate 
 	FROM 
 		userinfo 
 	WHERE 
 		u_id = #{u_id}
 
 </select>
+
+<update id="modify" parameterType="com.docmall.demo.domain.UserInfoVO">
+
+ UPDATE
+ 	userinfo
+ SET
+ 	u_email = #{u_email},u_zip_code = #{u_zip_code},u_addr = #{u_addr}, u_addrdetail = #{u_addrdetail}, u_phone = #{u_phone}, u_regdate = sysdate 
+ WHERE
+ 	u_id = #{u_id}
+
+</update>
+
+<update id="changePw" parameterType="map">  <!-- 파라미터가 두개면은 map으로 받는다. -->
+
+	UPDATE
+	 	userinfo
+	 SET
+	 	u_pwd = #{new_pwd}
+	 WHERE	
+	 	u_id = #{u_id}
+
+</update>
+
+<delete id="delete" parameterType="String">
+
+	DELETE FROM
+		userinfo
+	WHERE
+		u_id = #{u_id}
+
+
+</delete>
 
 
 

@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,7 +75,7 @@ public class UserInfoController {
 		
 		userInfoService.join(vo);
 		
-		return "redirect:/list";
+		return "redirect:/userinfo/login";
 	}
 	
 	// 로그인 폼
@@ -83,6 +84,7 @@ public class UserInfoController {
 		
 	}
 	
+	// 로그인 폼
 	@PostMapping("/login")  // 파라미터 1)LoginDTO dto  2)String u_id, String u_pwd
 	public String login(String u_id, String u_pwd, HttpSession session, RedirectAttributes rttr) throws Exception {
 		
@@ -94,22 +96,128 @@ public class UserInfoController {
 		if(vo != null) { // 아이디가 존재하는 경우
 			// 비밀번호 비교            u_pwd: 사용자가 입력한 비번   vo.getU_pwd(): 암호화된 비번 
 			if(passwordEncoder.matches(u_pwd, vo.getU_pwd())) { // 사용자가 입력한 비번이 암호화된 형태에 해당하는 것이라면 true.
-				session.setAttribute("login_status", vo);
+				session.setAttribute("login_status", vo); // login_status이름으로 세션방식으로 저장함
 			}else {  // 사용자가 입력한 비번이 암호화된 형태에 해당하지 않는 것이라면 false.
 				msg = "failPW";
-				url = "userinfo/login";  // 로그인 폼 주소
+				url = "/userinfo/login";  // 로그인 폼 주소
 			}
 		}else {          // 아이디가 존재하지 않을 경우
 			msg = "failID";
-			url = "userinfo/login";  // 로그인 폼 주소
+			url = "/userinfo/login";  // 로그인 폼 주소
 		}
 		
-		rttr.addAttribute("msg",msg); // jsp에서 msg변수를 사용목적
+		rttr.addFlashAttribute("msg",msg); // jsp에서 msg변수를 사용목적
 		
 		return "redirect:" + url;  // 메인으로 이동.
 		
 	}
 	
+	// 로그아웃
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		
+		session.invalidate(); // 세션형태로 관리되는 모든 메모리는 소멸.
+		
+		return "redirect:/";
+	}
+	
+	// 마이페이지 구성   Model model: 여기서 만든 정보를 jsp에서 사용하기 위해
+	@GetMapping("/mypage") // 인증된 사용자만 사용가능
+	public void mypage(HttpSession session, Model model) throws Exception {
+		
+		String u_id = ((UserInfoVO) session.getAttribute("login_status")).getU_id();
+		
+		UserInfoVO vo = userInfoService.login(u_id);
+		
+		model.addAttribute("userinfo", vo);
+	}
+	
+	// 마이페이지 수정          HttpSession session: 인증이나 수정에 필요   RedirectAttributes rttr: 메세지를 출력하기위해
+	@PostMapping("/modify")
+	public String modify(UserInfoVO vo,HttpSession session, RedirectAttributes rttr) throws Exception{
+		
+		// 인터셉터는 나중에 보충설명
+		if(session.getAttribute("login_status") == null) return "redirect:/userinfo/login"; 
+		
+		String u_id = ((UserInfoVO) session.getAttribute("login_status")).getU_id();
+		
+		log.info("수정데이터: " + vo);
+		userInfoService.modify(vo);
+		
+		rttr.addFlashAttribute("msg", "success");
+		
+		return "redirect:/userinfo/mypage";
+	}
+	
+	// 비밀번호변경 화면
+	@GetMapping("/changepw")
+	public void changepw() {
+		
+	}
+	
+	// 비밀번호 변경
+	@PostMapping("/changepw")
+	public String changepw(String cur_pwd, String new_pwd, HttpSession session, RedirectAttributes rttr) {
+		
+		String u_id = ((UserInfoVO) session.getAttribute("login_status")).getU_id();
+	
+		UserInfoVO vo = userInfoService.login(u_id);
+		
+		String msg = "";  // 아이디나 비번이 하나라도 틀리면 나오는 실패메세지
+		
+		if(vo != null) { // 아이디가 존재하는 경우
+			// 비밀번호 비교            u_pwd: 사용자가 입력한 비번   vo.getU_pwd(): 암호화된 비번 
+			if(passwordEncoder.matches(cur_pwd, vo.getU_pwd())) { // 사용자가 입력한 비번이 암호화된 형태에 해당하는 것이라면 true.
+			
+				// 신규비밀번호 변경작업
+				String u_pwd = passwordEncoder.encode(new_pwd);
+				userInfoService.changePw(u_id, u_pwd);
+				msg = "success";
+			}else {  // 사용자가 입력한 비번이 암호화된 형태에 해당하지 않는 것이라면 false.
+				msg = "failPW";
+			}
+		}
+		rttr.addFlashAttribute("msg",msg); // jsp에서 msg변수를 사용목적
+		
+		return "redirect:/userinfo/changepw";
+		
+	}
+	
+	@GetMapping("/delete")
+	public void delete() {
+		
+	}
+	
+	// 회원탈퇴 
+	@PostMapping("/delete")
+	public String delete(String u_pwd,HttpSession session, RedirectAttributes rttr) throws Exception {
+		
+		String u_id = ((UserInfoVO) session.getAttribute("login_status")).getU_id();
+		
+		UserInfoVO vo = userInfoService.login(u_id);
+		
+		String msg = "";  // 아이디나 비번이 하나라도 틀리면 나오는 실패메세지
+		String url = "";
+		
+		if(vo != null) { // 아이디가 존재하는 경우
+			// 비밀번호 비교            u_pwd: 사용자가 입력한 비번   vo.getU_pwd(): 암호화된 비번 
+			if(passwordEncoder.matches(u_pwd, vo.getU_pwd())) { // 사용자가 입력한 비번이 암호화된 형태에 해당하는 것이라면 true.
+			
+				
+				userInfoService.delete(u_id);  // 사용자가 입력한 비번이 Encdoer에서 매번바뀌기 때문에 매개변수로 사용하면 안됨
+				session.invalidate();
+				msg = "success";
+				url = "/";
+				
+			}else {  // 사용자가 입력한 비번이 암호화된 형태에 해당하지 않는 것이라면 false.
+				msg = "failPW";
+				url = "/userinfo/delete";
+			}
+		}
+		rttr.addFlashAttribute("msg",msg); // jsp에서 msg변수를 사용목적
+		
+		return "redirect:" + url;
+	}
 	
 	
 }

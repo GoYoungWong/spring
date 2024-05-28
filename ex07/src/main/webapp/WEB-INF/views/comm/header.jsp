@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+    
 <header>
   <!-- Fixed navbar -->
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -9,12 +13,24 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
+      <!-- 인증 전 --><!-- sessionScope 세션방식으로 서버측에 메모리에 정보가 저장했을 때 그 정보를 가르키는 것 -->
+      <c:if test="${sessionScope.login_status == null }">
+        <li class="nav-item">
           <a class="nav-link" href="/userinfo/join">Join <!--<span class="sr-only">(current)</span>--></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/userinfo/login">LogIn</a>
         </li>
+        </c:if>
+        <!-- 인증 후 -->
+        <c:if test="${sessionScope.login_status != null }">
+        <li class="nav-item">
+          <a class="nav-link" href="/userinfo/mypage">Mypage <!--<span class="sr-only">(current)</span>--></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/userinfo/logout">Logout</a>
+        </li>
+        </c:if>
         <li class="nav-item">
           <a class="nav-link" href="#">Member List</a>
         </li>
