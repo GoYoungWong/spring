@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -113,6 +114,22 @@ public class ReplyController {
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		return entity;
 	}
+	
+	// 댓글수정 put, patch
+	@PutMapping(value = "/modify",consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE}) 
+	public ResponseEntity<String> modfiy(@RequestBody ReplyVO vo) {
+		ResponseEntity<String> entity = null;
+		
+		log.info("수정데이터: " + vo);
+		// 댓글수정작업
+		replyService.update(vo);
+		entity = new ResponseEntity<String>("success", HttpStatus.OK);
+		
+		return entity;
+		
+	}
+
+	
 	
 	
 	

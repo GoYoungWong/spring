@@ -43,5 +43,19 @@
 		(SEQ_REPLY.NEXTVAL, #{bno}, #{retext}, #{replyer})
 </insert>
 
+<update id="update" parameterType="com.docmall.demo.domain.ReplyVO">
+
+	UPDATE
+		reply
+	SET
+	   retext = #{retext}, updatedate = sysdate
+	WHERE
+		rno = #{rno}	
+
+
+
+
+
+</update>
 
 </mapper>

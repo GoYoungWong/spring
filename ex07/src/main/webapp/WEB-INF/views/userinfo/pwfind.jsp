@@ -59,16 +59,16 @@
 <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">
   <div class="container">
-    <h1 class="mt-3 mb-4 text-center">Register</h1>
+    <h1 class="mt-3 mb-4 text-center">비밀번호 찾기</h1>
     <div class="row">
         <div class="col">
             <div class="card card-info">
                 <div class="card-header">
-                <h3 class="card-title">Login Form</h3>
+                <h3 class="card-title">Pw Find Form</h3>
             </div>
                 
                 
-                  <form class="form-horizontal" id="loginForm" action="/userinfo/login" method="post">
+                  <form class="form-horizontal" id="pwfindForm" action="/userinfo/pwfind" method="post">
                   <div class="card-body">
                       <div class="form-group row">
                           <label for="u_id" class="col-sm-4 col-form-label">U_ID</label>
@@ -77,21 +77,33 @@
                           </div>
                       </div>
                       <div class="form-group row">
-                          <label for="u_pwd" class="col-sm-4 col-form-label">U_PWD</label>
+                          <label for="u_name" class="col-sm-4 col-form-label">U_NAME</label>
                           <div class="col-sm-8">
-                              <input type="password" class="form-control" id="u_pwd" name="u_pwd" placeholder="U_PWD" value="1234">
+                              <input type="text" class="form-control" id="u_name" name="u_name" placeholder="U_NAME" value="홍길동">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="u_email" class="col-sm-4 col-form-label">U_EMAIL</label>
+                          <div class="col-sm-6">
+                              <input type="text" class="form-control" id="u_email" name="u_email" placeholder="U_EMAIL" value="soondool1007@gmail.com">
+                          </div>
+                          <div class="col-sm-2">
+                          <button type="button" class="btn btn-link" id="btnMailAuthcode">인증번호발송</button>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="authcode" class="col-sm-4 col-form-label">인증코드</label>
+                          <div class="col-sm-8">
+                              <input type="text" class="form-control" id="authcode" name="authcode" placeholder="authcode">
                           </div>
                       </div>   
                   </div>
                   
                   <div class="card-footer text-center">
-                  <button type="submit" class="btn btn-info btn-block" id="btnJoin"><b>Login</b></button>
+                  <button type="submit" class="btn btn-info btn-block" id="btnPw"><b>비밀번호 재설정</b></button>
               </div>
             
             </form>
-            <div class="card-footer text-center">
-              <a href="/userinfo/idfind">아이디 찾기</a> <a href="/userinfo/pwfind">비밀번호 찾기</a>
-            </div>
           </div>
         </div>
     </div>
@@ -110,13 +122,36 @@
         }else if(msg == "failPW") {
             alert("비밀번호를 정확히 입력해주세요.");
             document.getElementById("u_id").focus();
-        }else if(msg == "success") {
-        	alert("아이디를 메일발송했습니다.");
+        }else if(msg == "failInput") {
+            alert("입력정보를 확인해주세요.");
+        }else if(msg == "failAuth") {
+            alert("인증코드를 확인해주세요.");
         }
       
 
         $(document).ready(function() {
+			
+        	// 메일인증코드요청
+          $("#btnMailAuthcode").on("click", function() {
+                
+                if($("#u_email").val() == "") {
+                    alert("메일을 입력하세요.");
+                    $("#u_email").focus();
+                    return;
+                }
 
+                $.ajax({
+                    url: '/email/authcode',
+                    type: 'get',                                                   // type(타입리프명)적은 이유는 EmailController에 있는 String type과 일치 하기 위해
+                    data: {receiverMail : $("#u_email").val(), type : "emailPw"},  // EmailDTO dto로 받을 데이터
+                    dataType: 'text', // success의 리턴타입이 String이기 때문에 text사용
+                    success: function(result) {
+                        if(result == "success") {  // Controller에 success에서 넘어온다.
+                            alert("메일로 인증코드가 발급되었습니다.")
+                        }
+                    }
+                });
+            });
             
         }); // ready event end
 

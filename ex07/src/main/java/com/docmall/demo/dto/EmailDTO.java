@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@AllArgsConstructor // 매개변수가 있는 생성자를 만들어줌
 public class EmailDTO {
 
 	private String senderName; // 발신자

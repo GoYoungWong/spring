@@ -15,4 +15,7 @@ public interface ReplyService {
 		
 		// 댓글저장
 		void insert(ReplyVO vo);
+		
+		// 글수정
+		void update(ReplyVO vo);
 }

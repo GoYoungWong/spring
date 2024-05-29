@@ -24,7 +24,7 @@ public class EmailServiceImpl implements EmailService {
 	private final SpringTemplateEngine templateEngine; // 매개변수 생성자
 	
 	@Override
-	public void sendMail(EmailDTO dto, String authcode) {
+	public void sendMail(String type,EmailDTO dto, String authcode) {
 		
 		// 메일구성정보 담당(받는사람, 보내는사람, 받는사람 메일주소, 본문내용)
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -43,7 +43,7 @@ public class EmailServiceImpl implements EmailService {
 			mimeMessageHelper.setTo(dto.getReceiverMail()); // 메일수신자
 			mimeMessageHelper.setFrom(new InternetAddress(dto.getSenderMail(), dto.getSenderName()));
 			mimeMessageHelper.setSubject(dto.getSubject()); // apdlfwpahr
-			mimeMessageHelper.setText(setContext(authcode,"email"), true); // 메일 본문 내용, true: HTML 내용을 사용함
+			mimeMessageHelper.setText(setContext(authcode, type), true); // 메일 본문 내용, true: HTML 내용을 사용함
 														// email.html파일을 가리킴
 			// 메일발송기능
 			mailSender.send(mimeMessage);
@@ -51,9 +51,7 @@ public class EmailServiceImpl implements EmailService {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+		
 	// thymeleaf를 통한 html 적용
 	// String authcode : 인증코드.  String type : email.html 확장자만 빠지고 들어옴
 	public String setContext(String authcode,String type) {
@@ -62,5 +60,6 @@ public class EmailServiceImpl implements EmailService {
 		return templateEngine.process(type, context);
 	
 	}
-	
-}
+
+ }
+

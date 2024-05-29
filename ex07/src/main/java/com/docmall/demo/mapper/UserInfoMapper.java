@@ -10,6 +10,7 @@ import com.docmall.demo.domain.UserInfoVO;
 // 스프링에서는 Mapper인터페이스르ㅡ구현한 프록시클래스가 내부적으로 bean으로 자동생성되어 의존성 주입을 하게된다.
 public interface UserInfoMapper {
 	
+	// 아이디 중복체크
 	String idCheck(String u_id);
 	
 	// 회원가입
@@ -26,5 +27,14 @@ public interface UserInfoMapper {
 		
 	// 회원탈퇴
 	void delete(String u_id);
+	
+	// 아이디 찾기
+	String idfind(@Param("u_name") String u_name, @Param("u_email") String u_email);
+	
+	// 임시비밀번호
+	String pwfind(@Param("u_id")String u_id,@Param("u_name") String u_name,@Param("u_email") String u_email);
+	
+	// 임시비밀번호업데이트
+	void tempPwUpdate(@Param("u_id")String u_id,@Param("u_pwd") String u_pwd);
 
 }

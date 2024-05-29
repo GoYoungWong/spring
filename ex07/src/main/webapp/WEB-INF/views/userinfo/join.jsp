@@ -316,7 +316,7 @@
                 $.ajax({
                     url: '/email/authcode',
                     type: 'get',
-                    data: {receiverMail : $("#u_email").val()},  // EmailDTO dto로 받을 데이터
+                    data: {receiverMail : $("#u_email").val(), type : "emailjoin"},  // EmailDTO dto로 받을 데이터
                     dataType: 'text', // success의 리턴타입이 String이기 때문에 text사용
                     success: function(result) {
                         if(result == "success") {  // Controller에 success에서 넘어온다.

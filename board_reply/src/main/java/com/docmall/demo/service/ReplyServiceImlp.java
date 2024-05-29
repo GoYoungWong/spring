@@ -33,4 +33,10 @@ public class ReplyServiceImlp implements ReplyService {
 		// TODO Auto-generated method stub
 		replyMapper.insert(vo);
 	}
+
+	@Override
+	public void update(ReplyVO vo) {
+		// TODO Auto-generated method stub
+		replyMapper.update(vo);
+	}
 }

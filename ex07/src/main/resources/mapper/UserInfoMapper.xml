@@ -67,6 +67,44 @@
 
 </delete>
 
+<select id="idfind" resultType="String" parameterType="map">
+
+	SELECT
+		u_id
+	FROM
+		userinfo
+	WHERE
+		u_name = #{u_name}
+	AND
+		u_email = #{u_email}
+
+
+</select>
+
+<select id="pwfind" resultType="String" parameterType="map">
+SELECT
+		u_email
+	FROM
+		userinfo
+	WHERE
+		u_id = #{u_id}
+	AND
+		u_name = #{u_name}
+	AND
+		u_email = #{u_email}
+
+</select>
+
+<update id="tempPwUpdate" parameterType="map">
+
+	UPDATE
+		userinfo
+	SET
+		u_pwd = #{u_pwd}
+	WHERE
+		u_id = #{u_id}
+
+</update>
 
 
 </mapper>

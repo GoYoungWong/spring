@@ -70,6 +70,24 @@ public class UserInfoServiceImpl implements UserInfoService {
 		userInfoMapper.delete(u_id);
 	}
 
+	@Override
+	public String idfind(String u_name, String u_email) {
+		// TODO Auto-generated method stub
+		return userInfoMapper.idfind(u_name, u_email);
+	}
+
+	@Override
+	public String pwfind(String u_id, String u_name, String u_email) {
+		// TODO Auto-generated method stub
+		return userInfoMapper.pwfind(u_id, u_name, u_email);
+	}
+
+	@Override
+	public void tempPwUpdate(String u_id, String u_pwd) {
+		// TODO Auto-generated method stub
+		userInfoMapper.tempPwUpdate(u_id, u_pwd);
+	}
+
 
 
 	

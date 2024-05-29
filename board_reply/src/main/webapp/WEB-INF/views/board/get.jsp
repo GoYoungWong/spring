@@ -293,6 +293,26 @@ let actionForm = document.getElementById("actionForm");  // 위에 form태그 �
             });
         });
 
+        // 2)모달(Modal)대화상자 댓글수정
+        $("#btnModalReplyModify").on("click", function() {
+
+            // $("#replyer").val(); : <input type="text" id="replyer"> 태그의 value값
+            let rno = $("#reply_rno").html();
+            let replyer = $("#replyer").val();
+            let retext = $("#retext").val();
+
+            // 1)댓글수정데이터를 자바스크립트 Object문법으로 표현
+            let replyData = {rno: $("#reply_rno").html(), replyer : replyer, retext : retext };
+
+            // 2)댓글데이터를 JSON변환하여 서버에 전송. 
+            // JSON변환: 서로다른 데이터포맷을 공통된 포맷으로 보낼떄 사용되는 표현법
+            // console.log(JSON.stringify(replyData));
+
+            // return;
+
+            
+        });
+
 
 
 

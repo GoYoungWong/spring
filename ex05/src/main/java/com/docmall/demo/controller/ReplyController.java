@@ -97,6 +97,7 @@ public class ReplyController {
 		// 댓글수정작업
 		replySerivce.update(vo);
 		
+		// 성공했다는 200코드를 보냄
 		entity = new ResponseEntity<String>("success", HttpStatus.OK);
 		
 		return entity;

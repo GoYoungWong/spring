@@ -21,5 +21,14 @@ public interface UserInfoService {
 	
 	// 회원탈퇴
 	void delete(String u_id);
+	
+	// 아이디 찾기
+	String idfind(String u_name, String u_email);
+	
+	// 비밀번호재설정
+	String pwfind(String u_id,String u_name,String u_email);
+	
+	// 임시비밀번호업데이트
+	void tempPwUpdate(String u_id,String u_pwd);
 
 }
