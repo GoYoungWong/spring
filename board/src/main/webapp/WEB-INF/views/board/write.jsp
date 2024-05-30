@@ -60,12 +60,12 @@
 		        toolbarCanCollapse : true,
 		        removePlugins : "elementspath", 
 		        //업로드 탭기능추가 속성. CKEditor에서 파일업로드해서 서버로 전송클릭하면 , 이 주소가 동작된다.
-		        filebrowserUploadUrl: '/admin/product/imageUpload' 
+		        filebrowserUploadUrl: '/admin/product/imageUpload' // 업로드 기능을 제공
 		}
 		
 		CKEDITOR.replace("content", ckeditor_config);
 		
-		console.log("ckediotr 버전: ", CKEDITOR.version);
+		console.log("ckediotr 버전: ", CKEDITOR.version);   // ckeditor 버전 : 4.12.1 (Standard)
 		});
 </script>
 </body>
